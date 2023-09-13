@@ -9,7 +9,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <div className={'grid gap-0 grid-cols-3 min-h-screen'}>
+
+          {/* Header */}
+          <div className={'col-span-3 bg-teal-700 p-3 h-full'}>
+            <span className={'bold text-white text-lg'}>
+              Kreator Karty Bankowej
+            </span>
+          </div>
+
+          {children}
+          
+          {/* Footer */}
+          <div className={'col-span-3 bg-teal-700 p-3'}>
+            <span className={'bold text-white text-sm'}>
+              Autor strony: <br/>
+              Filip Sankowski
+            </span>
+          </div>
+
+        </div>
       </body>
     </html>
   )
