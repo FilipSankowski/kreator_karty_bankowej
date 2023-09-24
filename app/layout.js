@@ -9,10 +9,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div className={'grid gap-0 grid-cols-3 min-h-screen'}>
+        <div className={'flex flex-col min-h-screen'}>
 
           {/* Header */}
-          <div className={'col-span-3 bg-teal-700 p-3 h-full'}>
+          <div className={'bg-teal-700 p-3 w-full'}>
             <span className={'bold text-white text-lg'}>
               Kreator Karty Bankowej
             </span>
@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
           {children}
           
           {/* Footer */}
-          <div className={'col-span-3 bg-teal-700 p-3'}>
+          <div className={'bg-teal-700 p-3 bottom-0 w-full'}>
             <span className={'bold text-white text-sm'}>
               Autor strony: <br/>
               Filip Sankowski
