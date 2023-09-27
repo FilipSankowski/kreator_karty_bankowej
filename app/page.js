@@ -3,8 +3,18 @@
 import Condition from "@/components/Condition";
 import Input from "@/components/Input";
 import RadioInput from "@/components/RadioInput";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CardPreview from "./CardPreview";
+import { useSpring, a, to } from "react-spring";
+
+const calc = (x, y, rect) => {
+  return [
+  -(y - rect.top - rect.height / 2) / 5,
+  (x - rect.left - rect.width / 2) / 5,
+  1.4,
+  ]
+}
+const trans = (x, y, s) => `perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`
 
 export default function Home() {
   const backgroundOptions = [
@@ -12,6 +22,31 @@ export default function Home() {
     {label: 'Las', value: './img/forest.jpg'},
     {label: 'Rafa koralowa', value: './img/reef.jpg'},
   ];
+
+  /* Data for 3d hover effect */
+  const cardRef = useRef(null);
+  const config = { 
+    xys: [0, 0, 1], 
+    mass: 1,
+    tension: 170,
+    friction: 26,
+    clamp: false,
+    precision: 0.01,
+    velocity: 0, 
+  };
+  const [{ xys }, api] = useSpring(() => ({ xys: [0, 0, 1], config }), [config]);
+
+  /* Functions for 3d hover effect */
+  const handleMouseLeave = () =>
+    api.start({
+      xys: [0, 0, 1],
+    })
+  const handleMouseMove = (e) => {
+    const rect = cardRef.current.getBoundingClientRect()
+    api.start({
+      xys: calc(e.clientX, e.clientY, rect),
+    })
+  }
 
   const [fullName, setFullName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
@@ -85,17 +120,24 @@ export default function Home() {
         expirationDate.match(expirationDateRuleSet) &&
         backgroundImg.match(backgroundImgRuleSet)
         ?
-        <div className={'w-full h-full flex items-center justify-center'}>
-          <CardPreview 
-            fullName={fullName}
-            cardNumber={cardNumber}
-            expirationDate={expirationDate}
-            backgroundImg={backgroundImg}
-          />
+        <div className={'w-full h-full flex items-center justify-center'} ref={cardRef}>
+          <a.div
+            className={'absolute w-96 h-64'}
+            style={{ transform: xys.to(trans) }}
+            onMouseLeave={handleMouseLeave}
+            onMouseMove={handleMouseMove}
+          >
+            <CardPreview 
+              fullName={fullName}
+              cardNumber={cardNumber}
+              expirationDate={expirationDate}
+              backgroundImg={backgroundImg}
+            />
+          </a.div>
         </div>
         : 
         <div className={'w-full h-full flex items-center justify-center'}>
-          <div className={''}>
+          <div>
             <Condition value={fullName} match={fullNameRuleSet} className={'my-3'}>
               <span className={'font-bold'}>Pełne nazwisko musi składać się z min. 2 grup znaków oddzielonych spacją</span>
             </Condition>
